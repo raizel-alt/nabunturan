@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="gacha.css">
+  <title>BAICHA</title>
+</head>
+<body>
+  <h1>BAICHA</h1>
+
+  <div class="case-container">
+    <div class="items-strip" id="items-strip"></div>
+    <div class="center-line"></div>
+  </div>
+
+  <div class="result" id="result"></div>
+  <button onclick="openCase()">OPEN IT PLEASE</button>
+
+  <script>
+        const items = [
+        { name: "Nabunturan", color: "white", chance: 50, img: "Nabunturan.jpg" },
+        { name: "Astronuran", color: "green", chance: 40, img: "astro.jpg" },
+        { name: "Sadunturan", color: "green", chance: 40, img: "sad.jpg" },
+        { name: "Emonturan", color: "blue", chance: 30, img: "emo.jfif" },
+        { name: "Hardwarenuran", color: "fuchsia", chance: 25, img: "cp.jfif" },
+        { name: "Prefo~ Nabunturan", color: "fuchsia", chance: 15, img: "prefo.jpg" },
+        { name: "Surfernuran", color: "yellow", chance: 5,  img: "surfer.jpg" },
+        { name: "Kratosturan", color: "red", chance: 0.5, img: "kratos.jfif" },
+        { name: "TCC Nabunturan", color: "black", chance: 0.09, img: "tcc.jfif" },
+        ];
+
+    function pickWinner() {
+      const roll = Math.random() * 100;
+      let cumulative = 0;
+      for (const item of items) {
+        cumulative += item.chance;
+        if (roll <= cumulative) {
+          return item;
+        }
+      }
+      return items[items.length - 1]; // fallback
+    }
+
+function openCase() {
+  const strip = document.getElementById("items-strip");
+  const resultBox = document.getElementById("result");
+  const button = document.querySelector("button");
+
+  button.disabled = true;
+  button.innerText = "Rolling you nabunturan...";
+
+  const winner = pickWinner();
+
+  strip.innerHTML = "";
+  const fillerItems = [];
+
+  for (let i = 0; i < 20; i++) {
+    fillerItems.push(items[Math.floor(Math.random() * items.length)]);
+  }
+  fillerItems.push(winner);
+  for (let i = 0; i < 10; i++) {
+    fillerItems.push(items[Math.floor(Math.random() * items.length)]);
+  }
+
+  fillerItems.forEach(it => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<img src="${it.img}" alt="">
+                    <span style="color:${it.color}">${it.name}</span>`;
+    strip.appendChild(div);
+  });
+
+  const itemWidth = 140;
+  const stopIndex = 20;
+  const finalOffset = -(stopIndex * itemWidth - (700/2 - itemWidth/2));
+
+  strip.style.transition = "none";
+  strip.style.transform = "translateX(0)";
+  void strip.offsetWidth;
+
+  const overshootOffset = finalOffset - 1000;
+  strip.style.transition = "transform 3s linear";
+  strip.style.transform = `translateX(${overshootOffset}px)`;
+-
+  setTimeout(() => {
+    strip.style.transition = "transform 5s cubic-bezier(0.2, 0.9, 0.3, 1)";
+    strip.style.transform = `translateX(${finalOffset}px)`;
+  }, 1500);
+
+  setTimeout(() => {
+    resultBox.innerHTML = `You got: <span style="color:${winner.color}">${winner.name}</span>`;
+
+    // 🔓 re-enable button
+    button.disabled = false;
+    button.innerText = "Open Case";
+  }, 6400);
+}
+  </script>
+</body>
+</html>
